@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from preprocessing import *
 from data_splitting import *
 import random
 
@@ -11,7 +10,7 @@ def _initialize_weights(length):
 def _sigmoid(Z):
     return 1 / (1 + np.exp(-Z))
 
-def decision_boundary(prob):
+def _decision_boundary(prob):
     return np.asarray([ 1 if p >= .5 else 0 for p in prob])
 
 def _calculate_accuracy(y_pred, y_test):
@@ -41,11 +40,9 @@ def logistic_regression(X1, y1):
 
 
     y_pred = _sigmoid(np.dot(W, np.transpose(dataset['X_val'])))
-    # decision_boundary = np.vectorize(decision_boundary)
-    y_pred = decision_boundary(y_pred).flatten()
+    y_pred = _decision_boundary(y_pred).flatten()
     print("Validation Accuracy: {}".format(_calculate_accuracy(y_pred, dataset['y_val'])))
 
     y_pred = _sigmoid(np.dot(W, np.transpose(dataset['X_test'])))
-    # decision_boundary = np.vectorize(decision_boundary)
-    y_pred = decision_boundary(y_pred).flatten()
+    y_pred = _decision_boundary(y_pred).flatten()
     print("Testing Accuracy: {}".format(_calculate_accuracy(y_pred, dataset['y_test'])))
