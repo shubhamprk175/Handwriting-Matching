@@ -38,8 +38,7 @@ def _subtract_features(ap_data, feat_data):
     target_v = merge_matrix_1.iloc[:,0]
     merge_matrix_1.drop('target', axis=1, inplace=True)
     merge_matrix_2.drop('target', axis=1, inplace=True)
-    print(merge_matrix_1)
-    print(merge_matrix_2)
+
     merge_matrix_1 = abs(merge_matrix_1.subtract(merge_matrix_2, fill_value=0))
     return merge_matrix_1, target_v
 
@@ -66,4 +65,6 @@ def get_feature_matrix(data = 'hod', method = 'concatenate'):
     elif method == 'subtract':
         feature_m, target_v = _subtract_features(appended_data, feature_data)
 
-    return feature_m, target_v
+
+    feature_m = feature_m.loc[:, (feature_m != 0).any(axis=0)]
+    return feature_m.values, target_v.values

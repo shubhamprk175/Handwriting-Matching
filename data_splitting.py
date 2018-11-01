@@ -32,18 +32,19 @@ def _val_target(rawData, ValPercent, TrainingCount):
 
 def split_data(X1, y1):
     y_train = np.array(_training_target(y1, 80))
-    X_train   = np.transpose(_training_data(np.transpose(X1), 80))
+    # removed np.transpose(X1)
+    X_train   = _training_data(X1, 80)
     print("X_train.shape: {}".format(X_train.shape))
     print("y_train.shape: {}".format(y_train.shape))
 
     y_val = np.array(_val_target(y1,10, (len(y_train))))
-    X_val = np.transpose(_val_data(np.transpose(X1), 10, (len(y_train))))
+    X_val = _val_data(X1, 10, (len(y_train)))
     print("X_val.shape: {}".format(X_val.shape))
     print("y_val.shape: {}".format(y_val.shape))
 
 
     y_test = np.array( _val_target(y1, 10, (len(y_train)+len(X_val))))
-    X_test = np.transpose( _val_data(np.transpose(X1), 10, (len(y_train)+len(X_val))))
+    X_test = _val_data(X1, 10, (len(y_train)+len(X_val)))
     print("X_test.shape: {}".format(X_test.shape))
     print("y_test.shape: {}".format(y_test.shape))
 

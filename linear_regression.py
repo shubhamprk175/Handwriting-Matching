@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from preprocessing import *
+from data_splitting import *
 from sklearn.cluster import KMeans
 import math
 import random
@@ -64,7 +65,7 @@ def GenerateBigSigma(Data, MuMatrix,TrainingPercent,IsSynthetic):
     ##print ("BigSigma Generated..")
     return BigSigma
 
-def GetScalar(DataRow,MuRow, BigSigInv):
+def GetScalar(DataRow, MuRow, BigSigInv):
     R = np.subtract(DataRow,MuRow)
     T = np.dot(BigSigInv,np.transpose(R))
     L = np.dot(R,T)
@@ -135,22 +136,25 @@ X2, y2 = get_feature_matrix(data='hod', method='subtract')
 X3, y3 = get_feature_matrix(data='gsc', method='concatenate')
 X4, y4 = get_feature_matrix(data='gsc', method='subtract')
 
-RawTarget = y1
+RawTarget = y1.T
 RawData   = np.transpose(X1)
 
-dataset = split_data(X1, y1)
+dataset = split_data(RawData, RawTarget)
+dataset['X_train'].shape
+X1.shape
+dataset['X_val']
 
 
-#%%
 ErmsArr = []
 AccuracyArr = []
 
 kmeans = KMeans(n_clusters=M, random_state=0).fit(np.transpose(dataset['X_train']))
 Mu = kmeans.cluster_centers_
+Mu.shape
 
 BigSigma     = GenerateBigSigma(RawData, Mu, TrainingPercent,IsSynthetic)
 TRAINING_PHI = GetPhiMatrix(RawData, Mu, BigSigma, TrainingPercent)
-# W            = GetWeightsClosedForm(TRAINING_PHI,dataset['y_train'],(C_Lambda))
+W            = GetWeightsClosedForm(TRAINING_PHI,dataset['y_train'],(C_Lambda))
 TEST_PHI     = GetPhiMatrix(dataset['X_test'], Mu, BigSigma, 100)
 VAL_PHI      = GetPhiMatrix(dataset['X_val'], Mu, BigSigma, 100)
 
@@ -166,11 +170,12 @@ print("TEST_PHI.shape: {}".format(TEST_PHI.shape))
 
 
 
-# #%%
-# TR_TEST_OUT  = GetValTest(TRAINING_PHI,W)
-# VAL_TEST_OUT = GetValTest(VAL_PHI,W)
-# TEST_OUT     = GetValTest(TEST_PHI,W)
-#
+#%%
+TR_TEST_OUT  = GetValTest(TRAINING_PHI,W)
+VAL_TEST_OUT = GetValTest(VAL_PHI,W)
+TEST_OUT     = GetValTest(TEST_PHI,W)
+
+
 # TrainingAccuracy   = str(GetErms(TR_TEST_OUT,dataset['y_train']))
 # ValidationAccuracy = str(GetErms(VAL_TEST_OUT,dataset['y_val']))
 # TestAccuracy       = str(GetErms(TEST_OUT,dataset['y_test']))

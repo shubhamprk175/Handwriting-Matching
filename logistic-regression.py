@@ -13,7 +13,7 @@ def sigmoid(Z):
 
 X1, y1 = get_feature_matrix(data='hod', method='concatenate')
 # Returns dictionary containing training, testing, and val data and target
-dataset = split_data(X1, y1)
+dataset = split_data(X1.T, y1)
 
 epoch = 100
 learningRate = 0.01
