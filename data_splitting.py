@@ -30,7 +30,7 @@ def _val_target(rawData, ValPercent, TrainingCount):
     return t
 
 
-def split_data(X1, y1):
+def split_data(X1, y1, algo='linear'):
     y_train = np.array(_training_target(y1, 80))
     # removed np.transpose(X1)
     X_train   = _training_data(X1, 80)
@@ -48,4 +48,7 @@ def split_data(X1, y1):
     print("X_test.shape: {}".format(X_test.shape))
     print("y_test.shape: {}".format(y_test.shape))
 
-    return {'X_train':X_train, 'y_train':y_train, 'X_val':X_val, 'y_val':y_val, 'X_test':X_test, 'y_test':y_test}
+    if algo == 'linear':
+        return {'X_train':X_train, 'y_train':y_train, 'X_val':X_val, 'y_val':y_val, 'X_test':X_test, 'y_test':y_test}
+    else:
+        return {'X_train':X_train.T, 'y_train':y_train.T, 'X_val':X_val.T, 'y_val':y_val.T, 'X_test':X_test.T, 'y_test':y_test.T}
