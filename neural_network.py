@@ -46,11 +46,6 @@ def _get_model(input_size):
     return model
 
 
-
-# # <font color='blue'>Creating Model</font>
-
-# In[23]:
-
 def neural_network(X1, y1):
     model = _get_model(X1.shape[1])
 
@@ -64,8 +59,6 @@ def neural_network(X1, y1):
     earlystopping_cb = EarlyStopping(monitor='val_loss', verbose=1, patience=early_patience, mode='min')
 
     dataset = split_data(X1.T, y1.T, algo='neural')
-    # dataset['y_train'] = np.array(GenerateTrainingTarget(target, 80))
-    # dataset['X_train']   = np.transpose(GenerateTrainingDataMatrix(np.transpose(dataset), 80))
     print("dataset['X_train'].shape: {}".format(dataset['X_train'].shape))
     print("dataset['y_train'].shape: {}".format(dataset['y_train'].shape))
 
@@ -84,13 +77,14 @@ def neural_network(X1, y1):
 
     # Training and Validation Graphs
 
-    # Testing Accuracy
 def _decode_label(encodedLabel):
     if encodedLabel == 0:
         return 0
     elif encodedLabel == 1:
         return 1
 
+
+# Testing Accuracy
 def _testing_accuracy(X_test, y_test, model):
     wrong   = 0
     right   = 0
