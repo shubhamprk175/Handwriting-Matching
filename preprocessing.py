@@ -8,7 +8,9 @@ def _append_same_diff(same, diff):
     :param diff: diff pair dataframe
     :return: vertically appended dataframe
     """
-    return pd.concat([same, diff])
+    appended_data = pd.concat([same, diff])
+    appended_data = appended_data.sample(frac=1)
+    return appended_data
 
 
 

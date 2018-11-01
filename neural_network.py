@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from data_splitting import *
+import matplotlib.pyplot as plt
 
 from keras.utils import np_utils
 from keras.models import Sequential
@@ -46,35 +47,6 @@ def _get_model(input_size):
     return model
 
 
-def neural_network(X1, y1):
-    model = _get_model(X1.shape[1])
-
-    validation_data_split = 0.2
-    num_epochs = 10000
-    model_batch_size = 256
-    tb_batch_size = 128
-    early_patience = 100
-
-    tensorboard_cb   = TensorBoard(log_dir='logs', batch_size= tb_batch_size, write_graph= True)
-    earlystopping_cb = EarlyStopping(monitor='val_loss', verbose=1, patience=early_patience, mode='min')
-
-    dataset = split_data(X1.T, y1.T, algo='neural')
-    print("dataset['X_train'].shape: {}".format(dataset['X_train'].shape))
-    print("dataset['y_train'].shape: {}".format(dataset['y_train'].shape))
-
-    dataset['y_train'] = _encode_label(dataset['y_train'])
-
-
-    history = model.fit(dataset['X_train']
-                        , dataset['y_train']
-                        , validation_split=validation_data_split
-                        , epochs=num_epochs
-                        , batch_size=model_batch_size
-                        , callbacks = [tensorboard_cb,earlystopping_cb]
-                       )
-
-    _testing_accuracy(dataset['X_test'], dataset['y_test'], model)
-
     # Training and Validation Graphs
 
 def _decode_label(encodedLabel):
@@ -106,3 +78,40 @@ def _testing_accuracy(X_test, y_test, model):
     print("Errors: " + str(wrong), " Correct :" + str(right))
 
     print("Testing Accuracy: {0:.2f}%".format(right/(right+wrong)*100))
+
+def _plot_graphs(history):
+    df = pd.DataFrame(history.history)
+    df.plot(subplots=True, grid=True, figsize=(10,15))
+    plt.show()
+
+
+
+def neural_network(X1, y1):
+    model = _get_model(X1.shape[1])
+
+    validation_data_split = 0.2
+    num_epochs = 10000
+    model_batch_size = 128
+    tb_batch_size = 64
+    early_patience = 100
+
+    tensorboard_cb   = TensorBoard(log_dir='logs', batch_size= tb_batch_size, write_graph= True)
+    earlystopping_cb = EarlyStopping(monitor='val_loss', verbose=1, patience=early_patience, mode='min')
+
+    dataset = split_data(X1.T, y1.T, algo='neural')
+    print("dataset['X_train'].shape: {}".format(dataset['X_train'].shape))
+    print("dataset['y_train'].shape: {}".format(dataset['y_train'].shape))
+
+    dataset['y_train'] = _encode_label(dataset['y_train'])
+
+
+    history = model.fit(dataset['X_train']
+                        , dataset['y_train']
+                        , validation_split=validation_data_split
+                        , epochs=num_epochs
+                        , batch_size=model_batch_size
+                        , callbacks = [tensorboard_cb,earlystopping_cb]
+                       )
+
+    _testing_accuracy(dataset['X_test'], dataset['y_test'], model)
+    _plot_graphs(history)

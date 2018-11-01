@@ -22,7 +22,7 @@ X1, y1 = get_feature_matrix(data='hod', method='concatenate')
 
 
 
-neural_network(X1, y1)
-# neural_network(X2, y2)
+# neural_network(X1, y1)
+neural_network(X2, y2)
 # neural_network(X3, y3)
 # neural_network(X4, y4)
