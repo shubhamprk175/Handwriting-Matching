@@ -43,8 +43,8 @@ def split_data(X1, y1, algo='linear'):
     print("y_val.shape: {}".format(y_val.shape))
 
 
-    y_test = np.array( _val_target(y1, 10, (len(y_train)+len(X_val))))
-    X_test = _val_data(X1, 10, (len(y_train)+len(X_val)))
+    y_test = np.array( _val_target(y1, 10, (len(y_train)+len(y_val))))
+    X_test = _val_data(X1, 10, (len(y_train)+len(y_val)))
     print("X_test.shape: {}".format(X_test.shape))
     print("y_test.shape: {}".format(y_test.shape))
 

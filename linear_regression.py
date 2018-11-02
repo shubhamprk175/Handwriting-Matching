@@ -104,11 +104,20 @@ def GetErms(VAL_TEST_OUT, y_val):
     ##print ("Validation E_RMS : " + str(math.sqrt(sum/len(VAL_TEST_OUT))))
     return (str(accuracy) + ',' +  str(math.sqrt(sum/len(VAL_TEST_OUT))))
 
+def _plot_graph(x, y_train, y_val, y_test):
+    print("Plotting")
+    fig = plt.figure()
+    plt.figure(1)
+    plt.plot(x, y_train, 'r--', label="Training")
+    plt.plot(x, y_val, 'g--', label="Validation")
+    plt.plot(x, y_test, 'b--', label="Testing")
+    plt.xlabel("LearningRate")
+    plt.ylabel("E RMS")
+    plt.legend(loc='upper left')
+    plt.title("RMS")
+    plt.show()
+
 def linear_regression(X1, y1):
-    X1, y1 = get_feature_matrix(data='hod', method='concatenate')
-    X2, y2 = get_feature_matrix(data='hod', method='subtract')
-    X3, y3 = get_feature_matrix(data='gsc', method='concatenate')
-    X4, y4 = get_feature_matrix(data='gsc', method='subtract')
 
     RawTarget = y1.T
     RawData   = np.transpose(X1)
@@ -166,36 +175,49 @@ def linear_regression(X1, y1):
     L_Erms_Test  = []
     W_Mat        = []
 
-    for i in range(0,400):
+    test_acc = []
+    val_acc = []
+    train_acc = []
+    LR_Arr = []
+    for _ in range(5):
+        for i in range(0,400):
 
-        #print ('---------Iteration: ' + str(i) + '--------------')
-        Delta_E_D     = -np.dot((dataset['y_train'][i] - np.dot(np.transpose(W_Now),TRAINING_PHI[i])),TRAINING_PHI[i])
-        La_Delta_E_W  = np.dot(La,W_Now)
-        Delta_E       = np.add(Delta_E_D,La_Delta_E_W)
-        Delta_W       = -np.dot(learningRate,Delta_E)
-        W_T_Next      = W_Now + Delta_W
-        W_Now         = W_T_Next
+            #print ('---------Iteration: ' + str(i) + '--------------')
+            Delta_E_D     = -np.dot((dataset['y_train'][i] - np.dot(np.transpose(W_Now),TRAINING_PHI[i])),TRAINING_PHI[i])
+            La_Delta_E_W  = np.dot(La,W_Now)
+            Delta_E       = np.add(Delta_E_D,La_Delta_E_W)
+            Delta_W       = -np.dot(learningRate,Delta_E)
+            W_T_Next      = W_Now + Delta_W
+            W_Now         = W_T_Next
 
-        #-----------------TrainingData Accuracy---------------------#
-        TR_TEST_OUT   = GetValTest(TRAINING_PHI,W_T_Next)
-        Erms_TR       = GetErms(TR_TEST_OUT,dataset['y_train'])
-        L_Erms_TR.append(float(Erms_TR.split(',')[1]))
+            #-----------------TrainingData Accuracy---------------------#
+            TR_TEST_OUT   = GetValTest(TRAINING_PHI,W_T_Next)
+            Erms_TR       = GetErms(TR_TEST_OUT,dataset['y_train'])
+            L_Erms_TR.append(float(Erms_TR.split(',')[1]))
 
-        #-----------------ValidationData Accuracy---------------------#
-        VAL_TEST_OUT  = GetValTest(VAL_PHI,W_T_Next)
-        Erms_Val      = GetErms(VAL_TEST_OUT,dataset['y_val'])
-        L_Erms_Val.append(float(Erms_Val.split(',')[1]))
+            #-----------------ValidationData Accuracy---------------------#
+            VAL_TEST_OUT  = GetValTest(VAL_PHI,W_T_Next)
+            Erms_Val      = GetErms(VAL_TEST_OUT,dataset['y_val'])
+            L_Erms_Val.append(float(Erms_Val.split(',')[1]))
 
-        #-----------------TestingData Accuracy---------------------#
-        TEST_OUT      = GetValTest(TEST_PHI,W_T_Next)
-        Erms_Test = GetErms(TEST_OUT,dataset['y_test'])
-        L_Erms_Test.append(float(Erms_Test.split(',')[1]))
-
-
+            #-----------------TestingData Accuracy---------------------#
+            TEST_OUT      = GetValTest(TEST_PHI,W_T_Next)
+            Erms_Test = GetErms(TEST_OUT,dataset['y_test'])
+            L_Erms_Test.append(float(Erms_Test.split(',')[1]))
 
 
-    print ('----------Gradient Descent Solution--------------------')
-    print ("M = 10 \nLambda  = 0.0001\neta=0.01")
-    print ("E_rms Training   = " + str(np.around(min(L_Erms_TR),5)))
-    print ("E_rms Validation = " + str(np.around(min(L_Erms_Val),5)))
-    print ("E_rms Testing    = " + str(np.around(min(L_Erms_Test),5)))
+
+
+        print ('----------Gradient Descent Solution--------------------')
+        print ("M = 10 \nLambda  = 0.0001\neta=0.01")
+        print ("E_rms Training   = " + str(np.around(min(L_Erms_TR),5)))
+        print ("E_rms Validation = " + str(np.around(min(L_Erms_Val),5)))
+        print ("E_rms Testing    = " + str(np.around(min(L_Erms_Test),5)))
+
+        learningRate *= 2
+        test_acc.append(np.around(min(L_Erms_TR)))
+        val_acc.append(np.around(min(L_Erms_Val)))
+        train_acc.append(np.around(min(L_Erms_Test)))
+        LR_Arr.append(learningRate)
+
+    _plot_graph(LR_Arr, test_acc, val_acc, train_acc)
